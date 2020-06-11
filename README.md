@@ -1,10 +1,10 @@
-#Math Server
+# Math Server
 
-Simple math server for expressions like "321+32-(73\*12)".
+#### Simple math server for expressions like "321+32-(73\*12)".
 ------------------------------------------
-Server: C
+Server: __C__
 
-Parser & Interpreter: Haskell
+Parser & Interpreter: __Haskell__
 
-Client: Python
+Client: __Python__
 
