@@ -1,7 +1,7 @@
 all: server
 
 server: solver Server/main.c
-	ghc --make -no-hs-main -optc-O Server/main.c Server/solver -o server
+	ghc --make -no-hs-main -optc-O Server/main.c Server/solver -o Executables/server
 
 solver: Server/solver.hs
 	ghc -c -O Server/solver.hs
