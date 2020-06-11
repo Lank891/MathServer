@@ -1,0 +1,6 @@
+#o, hi files
+*.o
+*.hi
+
+#files from haskell compilation
+*solver_stub.h
