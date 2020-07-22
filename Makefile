@@ -9,4 +9,4 @@ solver: Server/solver.hs
 .Phony: clean
 
 clean:
-	rm Server/main.o Server/solver.hi Server/solver.o Server/solver_stub.h Server/server
+	rm Server/main.o Server/solver.hi Server/solver.o Server/solver_stub.h 

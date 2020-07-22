@@ -4,31 +4,24 @@ import Data.List
 import Text.Read
 import Foreign.C.String
 
-solveRPN :: String -> Maybe [Float]
-solveRPN = foldl ff (Just []) . words
-    where ff  Nothing _   = Nothing
-          ff (Just (x:y:ys)) "+" = Just( (y + x):ys )
-          ff (Just (x:y:ys)) "-" = Just( (y - x):ys )
-          ff (Just (x:y:ys)) "*" = Just( (y * x):ys )
-          ff (Just (x:y:ys)) "/" = if x == 0 then Nothing else Just( (y / x):ys )
-          ff (Just (x:y:ys)) "^" = Just( (y ** x):ys )
-          ff (Just (x:ys)) "ln"  = if x <= 0 then Nothing else Just( log x:ys )
-          ff (Just (x:ys)) "log" = if x <= 0 then Nothing else Just( logBase 10 x:ys )
-          ff (Just (xs)) number  = case readMaybe number of
-                                    Just num  -> Just(num:xs)
-                                    Nothing -> Nothing 
-
-getHeadJust :: Maybe [Float] -> Maybe Float
-getHeadJust Nothing = Nothing
-getHeadJust (Just xs) = Just $ head xs
-
-rpnFromList :: String -> Maybe Float
-rpnFromList = getHeadJust . solveRPN 
+solveRPN :: String -> Either [Float] String
+solveRPN = foldl ff (Left []) . words
+    where ff (Right x) _         = Right x
+          ff (Left (x:y:ys)) "+" = Left( (y + x):ys )
+          ff (Left (x:y:ys)) "-" = Left( (y - x):ys )
+          ff (Left (x:y:ys)) "*" = Left( (y * x):ys )
+          ff (Left (x:y:ys)) "/" = if x == 0 then Right "Division by 0" else Left( (y / x):ys )
+          ff (Left (x:y:ys)) "^" = Left( (y ** x):ys )
+          ff (Left (x:ys)) "ln"  = if x <= 0 then Right "Invalid Logarithm (ln)" else Left( log x:ys )
+          ff (Left (x:ys)) "log" = if x <= 0 then Right "Invalid Logarithm (log)" else Left( logBase 10 x:ys )
+          ff (Left xs) number    = case readMaybe number of
+                                    Just num  -> Left(num:xs)
+                                    Nothing -> Right ("Invalid Symbol: " ++ show number)
 
 returnAnswer :: String -> IO CString
-returnAnswer x = case rpnFromList x of
-                    Just n -> newCString $ (show n) ++ "\n"
-                    Nothing -> newCString $ "Invalid Calculations\n"
+returnAnswer x = case solveRPN x of
+                    Left n -> newCString $ show $ head n
+                    Right n -> newCString n
 
 rpn :: CString -> IO CString
 rpn x = do k <- peekCString x
