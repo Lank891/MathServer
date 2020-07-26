@@ -18,13 +18,17 @@ solveRPN = foldl ff (Left []) . words
                                     Just num  -> Left(num:xs)
                                     Nothing -> Right ("Invalid Symbol: " ++ show number)
 
-returnAnswer :: String -> IO CString
+headToString :: (Show a) => [a] -> String
+headToString []     = "Empty"
+headToString (x:xs) = show x
+
+returnAnswer :: String -> String
 returnAnswer x = case solveRPN x of
-                    Left n -> newCString $ show $ head n
-                    Right n -> newCString n
+                    Left n -> headToString n
+                    Right n -> n
 
 rpn :: CString -> IO CString
 rpn x = do k <- peekCString x
-           returnAnswer k
+           newCString $ returnAnswer k
 
 foreign export ccall rpn :: CString -> IO CString

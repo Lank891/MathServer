@@ -4,3 +4,6 @@
 
 #files from haskell compilation
 *solver_stub.h
+
+#tests executable
+*test
